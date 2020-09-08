@@ -1,0 +1,12 @@
+prefix: "&3[&bCompressors&3]"
+helpText:
+- "&bCompressors Help"
+- "&e/compressors give [player]"
+- "&e/compressors reload"
+
+reload: "%prefix% &aConfigs reloaded!"
+successfulGive: "%prefix% &aGave &e%player% &aa &e&lCompressor&a."
+successfulGiveOtherPlayer: "%prefix% &e%player% &agave you a &e&lCompressor&a."
+invalidPlayer: "%prefix% &e%player% &cis not online!"
+noPlacePerms: "%prefix% &cYou don't have permission to place this!"
+noPerms: "%prefix% &cYou don't have permission!"

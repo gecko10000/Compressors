@@ -1,0 +1,18 @@
+item:
+  name: "&e&lCompressor"
+  lore:
+  - "&aUse this to compact ores by"
+  - "&asending it a redstone pulse."
+
+
+recipes:
+  gold:
+    from:
+      ==: org.bukkit.inventory.ItemStack
+      v: 2230
+      type: GOLD_NUGGET
+    amount: 9
+    to:
+      ==: org.bukkit.inventory.ItemStack
+      v: 2230
+      type: GOLD_INGOT
