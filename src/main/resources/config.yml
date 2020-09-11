@@ -11,7 +11,7 @@ recipes:
       ==: org.bukkit.inventory.ItemStack
       v: 2230
       type: GOLD_NUGGET
-    amount: 9
+      amount: 9
     to:
       ==: org.bukkit.inventory.ItemStack
       v: 2230

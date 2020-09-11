@@ -7,6 +7,8 @@ helpText:
 reload: "%prefix% &aConfigs reloaded!"
 successfulGive: "%prefix% &aGave &e%player% &aa &e&lCompressor&a."
 successfulGiveOtherPlayer: "%prefix% &e%player% &agave you a &e&lCompressor&a."
+itemCreated: "%prefix% &aSet the %recipe% %from/to% item to %type%!"
 invalidPlayer: "%prefix% &e%player% &cis not online!"
+holdSomething: "%prefix% &cYou must be holding something to do this!"
 noPlacePerms: "%prefix% &cYou don't have permission to place this!"
 noPerms: "%prefix% &cYou don't have permission!"

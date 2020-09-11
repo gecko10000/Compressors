@@ -2,6 +2,7 @@ name: Compressors
 main: io.github.levtey.Compressors.Compressors
 version: 0.0.1
 author: levtey
+api-version: 1.15
 commands:
   compressors:
     description: Main plugin command
@@ -15,4 +16,7 @@ permissions:
     default: op
   compressors.reload:
     description: Allows you to reload the configs
+    default: op
+  compressors.create:
+    description: Creates an item stack in the config you can copy and put in the recipes
     default: op

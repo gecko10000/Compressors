@@ -72,6 +72,21 @@ public class Compressors extends JavaPlugin implements Listener {
 					} else {
 						sender.sendMessage(processColor(lang.getString("noPerms"), null));
 					}
+				} else if (args[0].equalsIgnoreCase("create")) {
+					if (sender.hasPermission("compressors.create")) {
+						if (args.length >= 3 && (args[2].equals("from") || args[2].equals("to"))) {
+							if (sender instanceof Player && !(((Player)sender).getInventory().getItemInMainHand().getType().equals(Material.AIR))) {
+								ItemStack item = ((Player)sender).getInventory().getItemInMainHand();
+								config.set("recipes." + args[1]+ "." + args[2], item);
+								this.saveConfig();
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang.getString("itemCreated").replaceAll("%prefix%", lang.getString("prefix")).replaceAll("%recipe%", args[1]).replaceAll("%from/to%", args[2]).replaceAll("%type%", item.getType().toString())));
+							} else {
+								sender.sendMessage(processColor(lang.getString("holdSomething"), null));
+							}
+						}
+					} else {
+						sender.sendMessage(processColor(lang.getString("noPerms"), null));
+					}
 				}
 			}
 		}
@@ -94,7 +109,7 @@ public class Compressors extends JavaPlugin implements Listener {
 	
 	@EventHandler (ignoreCancelled = true)
 	public void onBreak(BlockBreakEvent evt) {
-		if (evt.getBlock().getType().equals(Material.DISPENSER) && ((Dispenser)evt.getBlock().getState()).getPersistentDataContainer().has(compressorKey, PersistentDataType.BYTE) && evt.isDropItems()) {
+		if (evt.getBlock().getType().equals(Material.DISPENSER) && ((Dispenser)evt.getBlock().getState()).getPersistentDataContainer().has(compressorKey, PersistentDataType.BYTE) && !evt.getBlock().getDrops(evt.getPlayer().getInventory().getItemInMainHand()).isEmpty()) {
 			evt.setDropItems(false);
 			evt.getBlock().getWorld().dropItemNaturally(evt.getBlock().getLocation(), createCompressor());
 		}
@@ -102,22 +117,20 @@ public class Compressors extends JavaPlugin implements Listener {
 	
 	@EventHandler (ignoreCancelled = true)
 	public void onDispense(BlockDispenseEvent evt) {
-		config.set("recipes.test.from", new ItemStack(Material.BARRIER));
-		this.saveConfig();
 		if (evt.getBlock().getType().equals(Material.DISPENSER) && ((Dispenser)evt.getBlock().getState()).getPersistentDataContainer().has(compressorKey, PersistentDataType.BYTE)) {
 			final Dispenser compressor = (Dispenser)evt.getBlock().getState();
 			for (String key : config.getConfigurationSection("recipes").getKeys(false)) {
 				if (evt.getItem().isSimilar(config.getItemStack("recipes." + key + ".from"))) {
-					if (compressor.getInventory().containsAtLeast(config.getItemStack("recipes." + key + ".from"), config.getInt("recipes." + key + ".amount"))) {
+					if (compressor.getInventory().containsAtLeast(config.getItemStack("recipes." + key + ".from"), config.getItemStack("recipes." + key + ".from").getAmount() - 1)) {
 						evt.setItem(config.getItemStack("recipes." + key + ".to"));
-						ItemStack toRemove = config.getItemStack("recipes." + key + ".from");
-						toRemove.setAmount(config.getInt("recipes." + key + ".amount"));
+						final ItemStack toRemove = config.getItemStack("recipes." + key + ".from");
 						Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 							public void run() {
 								Inventory compressorInventory = compressor.getInventory();
 								compressorInventory.removeItem(toRemove);
 							}
 						}, 1L);
+						break;
 					}
 				}
 			}
@@ -129,7 +142,9 @@ public class Compressors extends JavaPlugin implements Listener {
 		ItemMeta compressorMeta = compressor.getItemMeta();
 		compressorMeta.setDisplayName(processColor(config.getString("item.name"), null));
 		List<String> lore = config.getStringList("item.lore");
-		lore.forEach(loreLine -> processColor(loreLine, null));
+		for (int i = 0; i < lore.size(); i++) {
+			lore.set(i, processColor(lore.get(i), null));
+		}
 		compressorMeta.setLore(lore);
 		compressorMeta.getPersistentDataContainer().set(compressorKey, PersistentDataType.BYTE, (byte)1);
 		compressor.setItemMeta(compressorMeta);
@@ -137,7 +152,7 @@ public class Compressors extends JavaPlugin implements Listener {
 	}
 	
 	public String processColor(String input, String playerName) {
-		return ChatColor.translateAlternateColorCodes('&', input.replaceAll("%prefix%", lang.getString("prefix")).replaceAll("%player%", playerName));
+		return ChatColor.translateAlternateColorCodes('&', input.replaceAll("%prefix%", lang.getString("prefix")).replaceAll("%player%", playerName).replaceAll("%type%", playerName));
 	}
 	
 	public void createLangFile() {
