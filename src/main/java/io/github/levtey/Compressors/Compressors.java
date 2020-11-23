@@ -2,12 +2,16 @@ package io.github.levtey.Compressors;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,6 +20,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -107,11 +112,18 @@ public class Compressors extends JavaPlugin implements Listener {
 		}
 	}
 	
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onBreak(BlockBreakEvent evt) {
-		if (evt.getBlock().getType().equals(Material.DISPENSER) && ((Dispenser)evt.getBlock().getState()).getPersistentDataContainer().has(compressorKey, PersistentDataType.BYTE) && !evt.getBlock().getDrops(evt.getPlayer().getInventory().getItemInMainHand()).isEmpty()) {
+		Block block = evt.getBlock();
+		if (block.getType().equals(Material.DISPENSER) && ((Dispenser)block.getState()).getPersistentDataContainer().has(compressorKey, PersistentDataType.BYTE) && !block.getDrops(evt.getPlayer().getInventory().getItemInMainHand()).isEmpty()) {
 			evt.setDropItems(false);
-			evt.getBlock().getWorld().dropItemNaturally(evt.getBlock().getLocation(), createCompressor());
+			World world = block.getWorld();
+			Location blockLoc = block.getLocation();
+			for (ItemStack invItem : ((Dispenser) block.getState()).getInventory()) {
+				if (invItem == null) continue;
+				world.dropItemNaturally(blockLoc, invItem);
+			}
+			world.dropItemNaturally(block.getLocation(), createCompressor());
 		}
 	}
 	
