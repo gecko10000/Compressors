@@ -133,7 +133,8 @@ public class Compressors extends JavaPlugin implements Listener {
 			final Dispenser compressor = (Dispenser)evt.getBlock().getState();
 			for (String key : config.getConfigurationSection("recipes").getKeys(false)) {
 				if (evt.getItem().isSimilar(config.getItemStack("recipes." + key + ".from"))) {
-					if (compressor.getInventory().containsAtLeast(config.getItemStack("recipes." + key + ".from"), config.getItemStack("recipes." + key + ".from").getAmount() - 1)) {
+					if (compressor.getInventory().containsAtLeast(config.getItemStack("recipes." + key + ".from"),
+							config.getItemStack("recipes." + key + ".from").getAmount() - 1)) {
 						evt.setItem(config.getItemStack("recipes." + key + ".to"));
 						final ItemStack toRemove = config.getItemStack("recipes." + key + ".from");
 						Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
